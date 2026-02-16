@@ -162,20 +162,28 @@ Resources**, and **General Purpose**.
 1. Click **"Shared Resources"** (this should already be selected).
 2. Below that you will see sub-tabs: **Cost-Optimized** and
    **Performance-Optimized**. Click **"Cost-Optimized"**.
-3. Make sure **"x86 (Intel/AMD)"** is selected (not Arm64).
-4. From the list of server sizes, select **CX22** — it has **2 vCPUs and 4 GB
-   RAM**.
+3. Choose an architecture — **either works fine**:
 
-This costs approximately **€4–6/month**.
+   | Architecture | Server to pick | Price | Notes |
+   |---|---|---|---|
+   | **x86 (Intel/AMD)** | **CX22** (2 vCPU, 4 GB RAM) | ~€4–6/month | Traditional, widest compatibility |
+   | **Arm64 (Ampere)** | **CAX11** (2 vCPU, 4 GB RAM) | ~€4–5/month | Slightly cheaper, equally supported |
+
+   If x86 servers are sold out in your chosen location (it happens), switch to
+   **Arm64** and pick **CAX11**. OpenClaw fully supports both architectures.
+
+4. Select the server with **2 vCPUs and 4 GB RAM** (CX22 on x86 or CAX11 on
+   Arm64).
 
 > **Why "Shared Resources / Cost-Optimized"?** OpenClaw is a lightweight
 > workload — it mostly sits idle waiting for messages and then calls AI APIs.
 > It does not need dedicated CPU cores. Shared resources are significantly
 > cheaper and perfectly adequate.
 >
-> **Why CX22 (4 GB RAM)?** OpenClaw needs at least 2 GB RAM to build and run
-> comfortably. The CX22 with 4 GB gives you headroom. If you only see CX11
-> (2 GB), that will also work but may be tight during the Docker build step.
+> **Why 4 GB RAM?** OpenClaw needs at least 2 GB RAM to build and run
+> comfortably. 4 GB gives you headroom. If you only see the 2 GB option
+> (CX11 or CAX11 with 2 GB), that will also work but may be tight during
+> the Docker build step.
 >
 > Do **not** pick "Dedicated Resources" or "General Purpose" — those cost
 > much more and you do not need them.
