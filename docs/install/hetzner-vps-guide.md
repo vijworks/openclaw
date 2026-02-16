@@ -343,10 +343,32 @@ You should see `Docker Compose version v2.x.x`.
 
 ## 7) Get the OpenClaw code onto the server
 
-Now we download the OpenClaw source code.
+We will **fork** the OpenClaw repository first, then clone **your fork**. This
+way you own your copy and can customize it freely, while still being able to pull
+updates from the original project.
+
+### Step 7.1 — Fork the repository on GitHub
+
+1. Go to **https://github.com/openclaw/openclaw** in your browser.
+2. Click the **"Fork"** button (top right corner).
+3. GitHub creates a copy at `https://github.com/YOUR_USERNAME/openclaw`.
+
+> **What is a fork?** A fork is your own personal copy of someone else's
+> project on GitHub. You can change anything in your fork without affecting the
+> original. And you can always pull new updates from the original later.
+
+### Step 7.2 — Clone your fork onto the server
+
+On your server, run (replace `YOUR_USERNAME` with your GitHub username):
 
 ```bash
-git clone https://github.com/openclaw/openclaw.git
+git clone https://github.com/YOUR_USERNAME/openclaw.git
+```
+
+For example, if your GitHub username is `jdoe`:
+
+```bash
+git clone https://github.com/jdoe/openclaw.git
 ```
 
 Then enter the project directory:
@@ -354,6 +376,33 @@ Then enter the project directory:
 ```bash
 cd openclaw
 ```
+
+### Step 7.3 — Add the upstream remote
+
+This connects your local copy to the **original** OpenClaw repository so you
+can pull future updates:
+
+```bash
+git remote add upstream https://github.com/openclaw/openclaw.git
+```
+
+You can verify both remotes are set up:
+
+```bash
+git remote -v
+```
+
+You should see:
+
+```
+origin    https://github.com/YOUR_USERNAME/openclaw.git (fetch)
+origin    https://github.com/YOUR_USERNAME/openclaw.git (push)
+upstream  https://github.com/openclaw/openclaw.git (fetch)
+upstream  https://github.com/openclaw/openclaw.git (push)
+```
+
+- **origin** = your fork (you push your changes here)
+- **upstream** = the original project (you pull updates from here)
 
 You are now inside the OpenClaw project folder on your server.
 
@@ -727,15 +776,42 @@ docker compose down
 
 ### Update OpenClaw to the latest version
 
+Since you cloned from your fork (step 7), updates come from **upstream** (the
+original OpenClaw repository):
+
 ```bash
 cd /root/openclaw
-git pull origin main
+git fetch upstream
+git merge upstream/main
 docker compose build
 docker compose up -d openclaw-gateway
 ```
 
-This pulls the latest code, rebuilds the Docker image, and restarts the gateway.
-Your configuration and data in `/root/.openclaw/` are preserved.
+This pulls the latest code from the original project, rebuilds the Docker image,
+and restarts the gateway. Your configuration and data in `/root/.openclaw/` are
+preserved.
+
+Optionally, push the updates to your fork so it stays in sync:
+
+```bash
+git push origin main
+```
+
+> **What if the merge has conflicts?** If you have customized code in your fork
+> and the update touches the same files, Git will report a "merge conflict." For
+> beginners, the simplest fix is to reset and pull fresh:
+>
+> ```bash
+> git stash
+> git merge upstream/main
+> git stash pop
+> ```
+>
+> Or if you have not made any local changes you want to keep:
+>
+> ```bash
+> git reset --hard upstream/main
+> ```
 
 ### Server reboots
 
@@ -827,6 +903,8 @@ server. If you did that, update the IP in your SSH commands.
 | **IP address** | A numerical address that identifies a computer on the internet (like a phone number) |
 | **localhost / 127.0.0.1** | Your own computer (when traffic is directed to "yourself") |
 | **Repository (repo)** | A folder containing a project's code, tracked by Git |
+| **Fork** | Your own copy of someone else's repository on GitHub — you can modify it freely |
+| **Upstream** | The original repository that your fork was created from |
 | **Git** | A version control system that tracks changes to code |
 | **`.env` file** | A configuration file that stores environment variables (settings and secrets) |
 
@@ -863,8 +941,8 @@ docker compose down
 # Start
 docker compose up -d openclaw-gateway
 
-# Update to latest version
-git pull origin main && docker compose build && docker compose up -d openclaw-gateway
+# Update to latest version (from original project)
+git fetch upstream && git merge upstream/main && docker compose build && docker compose up -d openclaw-gateway
 
 # Edit settings
 nano .env
