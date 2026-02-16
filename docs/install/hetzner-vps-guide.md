@@ -551,6 +551,46 @@ Save and exit (Ctrl+O, Enter, Ctrl+X).
 > Do **not** add a `ports:` section here or you will get a "port already in
 > use" error.
 
+### Step 8.5 — Create the OpenClaw config file
+
+OpenClaw stores its settings in a JSON config file. We need to create one with
+an important setting that allows the Control UI (dashboard) to connect properly
+through Docker.
+
+> **Why is this needed?** When you access the Control UI through an SSH tunnel,
+> the connection passes through Docker's internal network. Docker uses a
+> different IP address (`172.x.x.x`) than regular localhost (`127.0.0.1`), so
+> the gateway thinks you are a remote/unknown device and blocks the connection
+> with a "pairing required" error. This setting tells the gateway to trust
+> Control UI connections that have the correct token, even if they come through
+> Docker's network.
+
+Run this command (copy and paste the entire block at once):
+
+```bash
+cat > /root/.openclaw/openclaw.json << 'EOF'
+{
+  "gateway": {
+    "controlUi": {
+      "dangerouslyDisableDeviceAuth": true
+    }
+  }
+}
+EOF
+```
+
+Then fix the permissions so OpenClaw can read it:
+
+```bash
+chown 1000:1000 /root/.openclaw/openclaw.json
+```
+
+> **Is `dangerouslyDisableDeviceAuth` dangerous?** Despite the scary name, this
+> is safe in your setup because your ports are already locked to localhost
+> (step 8.3) and only accessible through your SSH tunnel. No one can reach
+> the gateway without your SSH password or key. The setting simply skips an
+> extra device-pairing step that does not work well with Docker networking.
+
 ---
 
 ## 9) Build and start OpenClaw
@@ -603,35 +643,70 @@ OpenClaw has a web-based Control UI where you can manage everything. Since we
 locked the gateway to localhost for security, we use an **SSH tunnel** to access
 it. This creates a secure pipe from your laptop to the server.
 
-### On your laptop (not the server), open a new terminal and run:
+### Step 10.1 — Open an SSH tunnel from your laptop
+
+On your **laptop** (not the server), open a **new** terminal window and run:
 
 ```bash
-ssh -N -L 18789:127.0.0.1:18789 root@YOUR_SERVER_IP
+ssh -N -L 18789:127.0.0.1:18789 -L 18790:127.0.0.1:18790 root@YOUR_SERVER_IP
 ```
 
 Replace `YOUR_SERVER_IP` with your actual server IP. For example:
 
 ```bash
-ssh -N -L 18789:127.0.0.1:18789 root@167.235.12.34
+ssh -N -L 18789:127.0.0.1:18789 -L 18790:127.0.0.1:18790 root@167.235.12.34
 ```
 
-> **What does this do?** It says "take port 18789 on my laptop and connect it
-> to port 18789 on the server." Now when you visit `localhost:18789` on your
-> laptop, it is secretly talking to the server.
+> **What does this do?** It says "take ports 18789 and 18790 on my laptop and
+> connect them to the same ports on the server." Now when you visit
+> `localhost:18789` on your laptop, it is secretly talking to the server.
+> Port 18789 is the main gateway. Port 18790 is the bridge (used for some
+> features like voice and file transfers).
 
 This command will appear to "hang" (no output, just a blinking cursor). That is
 normal — it is keeping the tunnel open. **Leave this terminal window open.**
 
-### Open the Control UI
+If it asks for a password, enter your server's root password.
 
-Open your web browser and go to:
+### Step 10.2 — Get your dashboard URL
+
+The Control UI needs a special URL that includes your security token. On the
+**server** (SSH in from a different terminal window), run:
+
+```bash
+cd /root/openclaw
+docker compose run --rm -e OPENCLAW_GATEWAY_URL=ws://openclaw-gateway:18789 openclaw-cli dashboard --no-open
+```
+
+This will print something like:
 
 ```
-http://127.0.0.1:18789/
+Dashboard URL: http://127.0.0.1:18789/#token=a3f8b2c1d4e5...long-string...
 ```
 
-You should see the OpenClaw Control UI. It will ask you for a **gateway token**.
-Paste the token you generated in step 8.2.
+**Copy the entire URL** (the full line starting with `http://`).
+
+> **Why the extra `-e OPENCLAW_GATEWAY_URL=...` part?** The CLI tool runs in its
+> own Docker container, so it needs to be told how to find the gateway container.
+> Docker containers talk to each other using service names (like
+> `openclaw-gateway`) instead of `localhost`.
+
+### Step 10.3 — Open the Control UI
+
+Open your web browser and **paste the full URL** from step 10.2. It looks like:
+
+```
+http://127.0.0.1:18789/#token=a3f8b2c1d4e5...
+```
+
+You should see the OpenClaw Control UI and the status should show **Connected**.
+
+> **Bookmark this URL.** You will use it every time you want to access the
+> Control UI. The token in the URL does not change unless you regenerate it.
+
+> **If you see "pairing required" errors**, make sure you completed step 8.5
+> (creating the `openclaw.json` config file). If you skipped it, go back and
+> do it now, then restart the gateway: `docker compose restart openclaw-gateway`
 
 You are now connected to your OpenClaw instance.
 
@@ -858,14 +933,65 @@ systemctl start docker
 Make sure the SSH tunnel is running on your laptop (step 10). The tunnel must
 stay open the entire time you want to access the UI.
 
-### "unauthorized" or "pairing required" in the Control UI
+### "unauthorized: gateway token missing" in the Control UI
 
-You need to enter the gateway token. This is the token you generated in
-step 8.2 and put in your `.env` file. You can retrieve it:
+The Control UI does not have your gateway token. Make sure you are using the
+full dashboard URL with the token included (see step 10.2). You can regenerate
+the URL at any time:
+
+```bash
+cd /root/openclaw
+docker compose run --rm -e OPENCLAW_GATEWAY_URL=ws://openclaw-gateway:18789 openclaw-cli dashboard --no-open
+```
+
+Or you can retrieve just the token and add it to the URL manually:
 
 ```bash
 grep OPENCLAW_GATEWAY_TOKEN /root/openclaw/.env
 ```
+
+Then open: `http://127.0.0.1:18789/#token=PASTE_TOKEN_HERE`
+
+### "pairing required" in the Control UI
+
+This is the most common issue with Docker-based setups. It happens because
+Docker's internal networking makes your browser connection appear to come from
+an unknown device (IP `172.x.x.x` instead of `127.0.0.1`).
+
+**Fix:** Make sure you have the `openclaw.json` config file from step 8.5. If
+you skipped that step or are unsure, run this on your server:
+
+```bash
+cat /root/.openclaw/openclaw.json
+```
+
+You should see `"dangerouslyDisableDeviceAuth": true` inside a `"controlUi"`
+block. If the file is missing or does not contain this setting, create it:
+
+```bash
+cat > /root/.openclaw/openclaw.json << 'EOF'
+{
+  "gateway": {
+    "controlUi": {
+      "dangerouslyDisableDeviceAuth": true
+    }
+  }
+}
+EOF
+chown 1000:1000 /root/.openclaw/openclaw.json
+```
+
+Then restart the gateway and reload the dashboard URL:
+
+```bash
+cd /root/openclaw
+docker compose restart openclaw-gateway
+```
+
+> **Note:** If you already have an `openclaw.json` with other settings, you
+> need to add the `"gateway"` block to it rather than replacing the whole file.
+> Open it with `nano /root/.openclaw/openclaw.json` and add the gateway section
+> alongside your existing settings.
 
 ### WhatsApp QR code not showing
 
@@ -921,10 +1047,14 @@ Once everything is set up, here are the commands you will use most often.
 **From your laptop:**
 
 ```bash
-# Open SSH tunnel to access Control UI
-ssh -N -L 18789:127.0.0.1:18789 root@YOUR_SERVER_IP
+# Open SSH tunnel to access Control UI (forward both gateway and bridge ports)
+ssh -N -L 18789:127.0.0.1:18789 -L 18790:127.0.0.1:18790 root@YOUR_SERVER_IP
 
-# Then open http://127.0.0.1:18789/ in your browser
+# Then open the dashboard URL in your browser (the one from step 10.2)
+# It looks like: http://127.0.0.1:18789/#token=YOUR_TOKEN_HERE
+
+# To get the dashboard URL again, run on the server:
+# docker compose run --rm -e OPENCLAW_GATEWAY_URL=ws://openclaw-gateway:18789 openclaw-cli dashboard --no-open
 ```
 
 **From the server (SSH in first with `ssh root@YOUR_SERVER_IP`):**
