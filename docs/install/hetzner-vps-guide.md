@@ -459,7 +459,11 @@ OPENCLAW_GATEWAY_TOKEN=PASTE_YOUR_TOKEN_HERE
 
 # Network binding (lan = accessible within Docker network)
 OPENCLAW_GATEWAY_BIND=lan
-OPENCLAW_GATEWAY_PORT=18789
+
+# Bind ports to localhost only — access via SSH tunnel (secure)
+# This means ports are NOT exposed to the public internet
+OPENCLAW_GATEWAY_PORT=127.0.0.1:18789
+OPENCLAW_BRIDGE_PORT=127.0.0.1:18790
 
 # Storage paths on the server
 OPENCLAW_CONFIG_DIR=/root/.openclaw
@@ -506,8 +510,8 @@ ANTHROPIC_API_KEY=sk-ant-api03-actualKeyHere
 
 ### Step 8.4 — Set up Docker Compose
 
-The project already includes a `docker-compose.yml` file, but for a production
-VPS setup we need a slightly customized version. Create it:
+The project already includes a `docker-compose.yml` file. For a production VPS
+setup we add an **override** file with a few extra settings. Create it:
 
 ```bash
 nano docker-compose.override.yml
@@ -523,10 +527,6 @@ services:
       - .env
     environment:
       NODE_ENV: production
-    ports:
-      # Bind to localhost only — access via SSH tunnel (secure)
-      - "127.0.0.1:18789:18789"
-      - "127.0.0.1:18790:18790"
     command:
       [
         "node",
@@ -542,10 +542,14 @@ services:
 
 Save and exit (Ctrl+O, Enter, Ctrl+X).
 
-> **What does `127.0.0.1:18789:18789` mean?** It means the gateway port is only
-> accessible from the server itself (localhost), not from the public internet.
-> This is a security measure. You will access it from your laptop via an SSH
-> tunnel (explained in step 10).
+> **Why no `ports:` section here?** The base `docker-compose.yml` already maps
+> the ports using the `OPENCLAW_GATEWAY_PORT` and `OPENCLAW_BRIDGE_PORT`
+> variables from your `.env` file. We set those to `127.0.0.1:18789` in
+> step 8.3, which means the ports are only accessible from the server itself
+> (localhost), not from the public internet. This is a security measure — you
+> will access it from your laptop via an SSH tunnel (explained in step 10).
+> Do **not** add a `ports:` section here or you will get a "port already in
+> use" error.
 
 ---
 
