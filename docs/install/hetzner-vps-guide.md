@@ -156,15 +156,29 @@ beginner-friendly Linux.)
 
 ### Step 4.5 — Choose server type
 
-Under **"Shared vCPU"** → **"x86 (Intel/AMD)"**:
+You will see three tabs across the top: **Shared Resources**, **Dedicated
+Resources**, and **General Purpose**.
 
-Select: **CX22** (or the cheapest option with **2 vCPUs and 4 GB RAM**)
+1. Click **"Shared Resources"** (this should already be selected).
+2. Below that you will see sub-tabs: **Cost-Optimized** and
+   **Performance-Optimized**. Click **"Cost-Optimized"**.
+3. Make sure **"x86 (Intel/AMD)"** is selected (not Arm64).
+4. From the list of server sizes, select **CX22** — it has **2 vCPUs and 4 GB
+   RAM**.
 
 This costs approximately **€4–6/month**.
 
-> **Why this size?** OpenClaw needs at least 2 GB RAM to build and run
+> **Why "Shared Resources / Cost-Optimized"?** OpenClaw is a lightweight
+> workload — it mostly sits idle waiting for messages and then calls AI APIs.
+> It does not need dedicated CPU cores. Shared resources are significantly
+> cheaper and perfectly adequate.
+>
+> **Why CX22 (4 GB RAM)?** OpenClaw needs at least 2 GB RAM to build and run
 > comfortably. The CX22 with 4 GB gives you headroom. If you only see CX11
 > (2 GB), that will also work but may be tight during the Docker build step.
+>
+> Do **not** pick "Dedicated Resources" or "General Purpose" — those cost
+> much more and you do not need them.
 
 ### Step 4.6 — Networking
 
