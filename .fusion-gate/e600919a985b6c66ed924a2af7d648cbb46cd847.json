@@ -1,0 +1,495 @@
+{
+  "schemaVersion": 3,
+  "generatedAt": "2026-11-18T02:02:25.431Z",
+  "headSha": "e600919a985b6c66ed924a2af7d648cbb46cd847",
+  "baseSha": "b6387afd6d2e0f43c2ae98d2d124dbc277f03cca",
+  "diffSha256": "924f5c8d5fd0e3f73eeb3b0b511fe040ec9b7420ba39f99eecc57cad7292db6f",
+  "diffIdentityVersion": 2,
+  "patchId": "9ffa9f87f9b569a999b079b3d683c7baddd4e48e",
+  "notProven": [],
+  "tier": "T2",
+  "gate": "gate-b",
+  "workKind": "code",
+  "reviewRound": "full",
+  "originalBlockerIds": [],
+  "actionClass": "reversible-code",
+  "actionClassSource": "wrapper-default",
+  "ownerApprovalRequired": false,
+  "fake": false,
+  "status": "PASS",
+  "toolingCheckout": {
+    "state": "current",
+    "detail": "/home/node/.openclaw/workspace/repos/worktrees/flo-tooling-gpt6xhigh (HEAD 494b4d0958c0) carries every refs/remotes/origin/master change to scripts/fusion-gate.mjs, skills/prometheus-fusion-panel"
+  },
+  "contractHash": "e672a4f5240135b6b25e408688f68b94bf21764b02b5de79dad694ce7e7c6f24",
+  "doctrineHash": "b723373361b88ef71d443b00b6aef91178d64fa5e00f52e6e3e7b2825891a461",
+  "runnerExit": 0,
+  "verdictPreservedAfterTimeout": false,
+  "wrapperTimeoutUnavailable": false,
+  "vehicle": {
+    "name": "local",
+    "transport": "local",
+    "selectedBy": "local"
+  },
+  "canonicalEvidence": {
+    "schema": "fusion-evidence-v4",
+    "version": "4.5.0",
+    "contract_hash": "e672a4f5240135b6b25e408688f68b94bf21764b02b5de79dad694ce7e7c6f24",
+    "doctrine_hash": "b723373361b88ef71d443b00b6aef91178d64fa5e00f52e6e3e7b2825891a461",
+    "gate": "gate-b",
+    "work_kind": "code",
+    "tier": "T2",
+    "review_round": "full",
+    "original_blocker_ids": [],
+    "timestamp": "2026-11-18T02:02:25Z",
+    "prompt_sanitized": false,
+    "prompt_redactions": [],
+    "seats": [
+      {
+        "seat": "astra",
+        "model": "oai-pool/gpt-6-astra",
+        "verdict": "PASS",
+        "status": "OK",
+        "reason": null,
+        "attempts": 1,
+        "latency_ms": 7305,
+        "content": "The diff satisfies the ticket within the specified two files. The unified OpenAI resolver grants `xhigh` to bare `gpt-6` and its hyphen- or dot-delimited variants, including `gpt-6-astra`, while normalization handles case and whitespace. Boundary checks exclude look-alikes such as `gpt-60` and `gpt-6x`.\n\nThe family parameter is supplied only by the unified resolver, preserving the Codex policy. Existing GPT-5.x allowlists and `max` eligibility remain unchanged. The added constant, matcher, and optional parameter match the requested minimum design without unrelated changes.\n\nThe four added tests cover family support, GPT-5.x regressions, negative matches, and Codex isolation. Supplied verification reports 372 passing tests, a regression test that fails without the fix, and successful formatting, lint, and both typechecks. No current-release correctness, safety, or required-behavior blocker is evident in the supplied diff.\n\nVERDICT: PASS",
+        "identity": {
+          "provider": "oai-pool",
+          "model": "gpt-6-astra",
+          "session_id": "5a833029-f7b6-477b-b0b8-0cf7bf80bcbc",
+          "fallback_used": false
+        },
+        "timerOrigin": "model-start",
+        "modelStartedAt": "2026-11-18T02:01:24.522Z",
+        "queueWaitMs": 31932,
+        "timedOut": false,
+        "timeouts": 0,
+        "effectiveRoute": "oai-pool/gpt-6-astra"
+      },
+      {
+        "seat": "gemini",
+        "model": "openrouter/google/gemini-4-carbon",
+        "verdict": "PASS",
+        "status": "OK",
+        "reason": null,
+        "attempts": 1,
+        "latency_ms": 46900,
+        "content": "Checked the two-file diff against the ticket's `BUSINESS_GOAL`, `EXISTING_PATTERN`, `MINIMUM_DIFF`, `EXCLUSIONS`, `VERIFY_EVIDENCE`, and the Simplicity Doctrine. In `extensions/openai/thinking-policy.ts`, `OPENAI_UNIFIED_XHIGH_MODEL_FAMILIES` (`[\"gpt-6\"]`) and `matchesModelFamily` follow the existing `normalizeModelId` / allowlist pattern to grant `xhigh` to bare `gpt-6` and `-`- or `.`-delimited variants (including `gpt-6-astra`) on `resolveUnifiedOpenAIThinkingProfile` only, while boundary checks prevent false matches on look-alike prefixes such as `gpt-60` and `gpt-6x`. Existing `gpt-5.x` `xhigh` lists, `gpt-5.6` `max` behavior, and `resolveOpenAICodexThinkingProfile` remain unchanged, with no extraneous abstractions, configuration knobs, or out-of-scope edits. The four added tests in `extensions/openai/provider-policy-api.test.ts` directly verify GPT-6 family `xhigh` exposure, GPT-5.x regression safety, prefix look-alike rejection, and Codex policy isolation, supported by clean Vitest, red-without-fix, formatter, linter, and typecheck evidence; no current-release blocker exists.\n\nVERDICT: PASS",
+        "identity": {
+          "provider": "openrouter",
+          "model": "google/gemini-4-carbon",
+          "session_id": "10345d69-a443-4ff5-aeb6-7eac6e627de2",
+          "fallback_used": false
+        },
+        "timerOrigin": "model-start",
+        "modelStartedAt": "2026-11-18T02:01:38.527Z",
+        "queueWaitMs": 45938,
+        "timedOut": false,
+        "timeouts": 0,
+        "effectiveRoute": "openrouter/google/gemini-4-carbon"
+      },
+      {
+        "seat": "qwen",
+        "model": "openrouter/qwen/qwen4-max",
+        "verdict": "PASS",
+        "status": "OK",
+        "reason": null,
+        "attempts": 1,
+        "latency_ms": 28406,
+        "content": "I checked the diff against the ticket's stated goal and minimum scope. The production change is confined to `extensions/openai/thinking-policy.ts`: one family constant (`gpt-6`), one boundary-aware matcher that accepts the bare id or `-`/`.`-delimited variants while rejecting prefix look-alikes like `gpt-60`/`gpt-6x`, and an optional `xhighModelFamilies` param on `buildOpenAIThinkingProfile` that only `resolveUnifiedOpenAIThinkingProfile` supplies. The Codex resolver still calls the builder without the new param, which defaults to `[]` and therefore cannot match, so the Codex policy is provably unchanged (and the added test pins that). `supportsMax` still keys off `gpt-5.6` only, and the existing `OPENAI_UNIFIED_XHIGH_MODEL_IDS` list and `matchesExactOrPrefix` are untouched, so gpt-5.x levels, max support, seat maps, and catalog handling are unaffected — matching the declared exclusions.\n\nCase handling is consistent with the existing `normalizeModelId` pattern (trim + lowercase), so `GPT-6-Astra` resolves the same as `gpt-6-astra`. The four added tests cover the positive family cases, the unchanged gpt-5.x matrix, negative look-alikes/unlisted models, and Codex isolation, which is exactly the regression surface this change could touch. The diff is roughly 30 production lines plus tests — well under the justification threshold — and introduces no new abstraction, config, flag, dependency, or unrelated refactor; the matcher is the smallest construct that expresses \"family with delimiter boundary\" without loosening the existing exact/prefix allowlist semantics. Verify evidence reports the full `extensions/openai/` suite (372 tests) green, a demonstrated fail-without-fix for the new test, and clean format/lint/typecheck for both source and test tsconfigs.\n\nI found no current-release correctness, safety, tenancy, or data-integrity defect: the only behavior delta is granting `xhigh` to `gpt-6*` on the unified OpenAI path, which is precisely the ticket's required behavior.\n\nVERDICT: PASS",
+        "identity": {
+          "provider": "openrouter",
+          "model": "qwen/qwen4-max",
+          "session_id": "5d37c98c-3811-4301-8949-6c2c153b0ad4",
+          "fallback_used": false
+        },
+        "timerOrigin": "model-start",
+        "modelStartedAt": "2026-11-18T02:01:16.914Z",
+        "queueWaitMs": 24322,
+        "timedOut": false,
+        "timeouts": 0,
+        "effectiveRoute": "openrouter/qwen/qwen4-max"
+      },
+      {
+        "seat": "sol",
+        "model": "oai-pool/gpt-6.1-sol",
+        "verdict": "PASS",
+        "status": "OK",
+        "reason": null,
+        "attempts": 1,
+        "latency_ms": 7826,
+        "content": "The diff satisfies the ticket within the specified two-file scope. The unified OpenAI resolver grants `xhigh` to `gpt-6` and its `-`/`.`-delimited variants, including `gpt-6-astra`, while rejecting prefix look-alikes such as `gpt-60` and `gpt-6x`. Existing normalization preserves case-insensitive matching.\n\nThe family parameter is supplied only by the unified resolver, leaving the Codex policy, GPT-5.x allowlists, and `max` logic unchanged. The four added tests cover the requested family behavior and regression boundaries. The supplied verification evidence reports passing tests, formatting, lint, and both typechecks, plus a failing regression test without the fix. No current-release critical or high-severity defect is evident in the supplied diff.\n\nVERDICT: PASS",
+        "identity": {
+          "provider": "oai-pool",
+          "model": "gpt-6.1-sol",
+          "session_id": "2db92e9a-b49f-423f-9bb5-6f02cd34218f",
+          "fallback_used": false
+        },
+        "timerOrigin": "model-start",
+        "modelStartedAt": "2026-11-18T02:01:31.470Z",
+        "queueWaitMs": 38879,
+        "timedOut": false,
+        "timeouts": 0,
+        "effectiveRoute": "oai-pool/gpt-6.1-sol"
+      }
+    ],
+    "quorum": {
+      "status": "PASS",
+      "passes": 4,
+      "fails": 0,
+      "abstains": 0,
+      "review_coverage": "4/4",
+      "timedOutSeats": [],
+      "quorum_minimum": 3,
+      "rule": "min-one-pass-zero-fail",
+      "reason": "4 valid PASSes (minimum 3) and zero valid FAILs"
+    },
+    "judge": null,
+    "synthesis": {
+      "generator": "deterministic",
+      "status": "PASS",
+      "counts": {
+        "passes": 4,
+        "fails": 0,
+        "abstains": 0
+      },
+      "blocker_ids": []
+    },
+    "status": "PASS",
+    "release_ready": true,
+    "owner_approval_required": false,
+    "elapsed_ms": 102268,
+    "route_preflight": {
+      "schema": "aeo.flo.fusion-route-preflight.v1",
+      "probe": {
+        "command": "node /home/node/.openclaw/workspace/repos/worktrees/flo-tooling-gpt6xhigh/scripts/fusion-reviewer-route-truth.mjs --json --budget 120 --routes gemini,astra,sol,qwen --catalog-only",
+        "verdict": "LIVE_CATALOG_LISTS_ALL_ROUTES",
+        "exitCode": 0,
+        "scope": "catalog"
+      },
+      "receipt": {
+        "schema": "aeo.flo.fusion-reviewer-route-truth.v1",
+        "verdict": "LIVE_CATALOG_LISTS_ALL_ROUTES",
+        "probedAt": "2026-11-18T02:00:52.578Z",
+        "contract": {
+          "path": "skills/prometheus-fusion-panel/references/fusion_contract.json",
+          "reviewerAgent": "fusion-reviewer",
+          "routes": 4
+        },
+        "seatMap": {
+          "path": null,
+          "present": false,
+          "mappedSeats": [],
+          "seats": [
+            {
+              "seat": "astra",
+              "model": "oai-pool/gpt-6-astra",
+              "effort": "xhigh",
+              "source": "contract"
+            },
+            {
+              "seat": "gemini",
+              "model": "openrouter/google/gemini-4-carbon",
+              "effort": "high",
+              "source": "contract"
+            },
+            {
+              "seat": "qwen",
+              "model": "openrouter/qwen/qwen4-max",
+              "effort": "high",
+              "source": "contract"
+            },
+            {
+              "seat": "sol",
+              "model": "oai-pool/gpt-6.1-sol",
+              "effort": "high",
+              "source": "contract"
+            }
+          ]
+        },
+        "positiveControl": {
+          "catalogScope": "agent",
+          "agentScoped": {
+            "command": "openclaw gateway call config.get",
+            "exitCode": 0,
+            "agentFound": true,
+            "wildcard": false,
+            "allowedModels": [
+              "oai-pool/gpt-6-astra",
+              "openrouter/deepseek/deepseek-v4.1-flash",
+              "zai-glm/glm-5.3",
+              "openrouter/x-ai/grok-4.7",
+              "oai-pool/gpt-6.1-sol",
+              "kimi/k3.1-pro",
+              "openrouter/deepseek/deepseek-v4.1-flash-1017",
+              "openrouter/moonshotai/kimi-k3.1-pro",
+              "openrouter/google/gemini-4-carbon",
+              "openrouter/qwen/qwen4-max"
+            ],
+            "defaultModel": "oai-pool/gpt-6-astra"
+          },
+          "availability": {
+            "command": "openclaw models list --all --json",
+            "exitCode": 0,
+            "modelsListed": 143,
+            "configuredAvailable": 27
+          }
+        },
+        "effort": {
+          "levels": [
+            "off",
+            "minimal",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "adaptive",
+            "max"
+          ],
+          "source": "host-cli-help",
+          "faults": [],
+          "contract": [
+            {
+              "seat": "astra",
+              "contract": "xhigh",
+              "mapped": "xhigh",
+              "source": "contract"
+            },
+            {
+              "seat": "gemini",
+              "contract": "high",
+              "mapped": "high",
+              "source": "contract"
+            },
+            {
+              "seat": "qwen",
+              "contract": "high",
+              "mapped": "high",
+              "source": "contract"
+            },
+            {
+              "seat": "sol",
+              "contract": "high",
+              "mapped": "high",
+              "source": "contract"
+            }
+          ]
+        },
+        "budget": {
+          "suppliedSeconds": 120,
+          "requiredSeconds": 120,
+          "refused": false,
+          "perRoute": [],
+          "source": "--budget"
+        },
+        "requiredBudgetSeconds": 120,
+        "requiredCanonicalRoutes": [
+          {
+            "seat": "astra",
+            "model": "oai-pool/gpt-6-astra",
+            "effort": "xhigh",
+            "effortMapped": "xhigh",
+            "effortSource": "contract",
+            "agentScopedListed": true,
+            "globallyAvailable": true,
+            "listedInLiveCatalog": true,
+            "exitCode": null,
+            "ok": null,
+            "winnerProvider": null,
+            "winnerModel": null,
+            "fallback": null,
+            "cause": null
+          },
+          {
+            "seat": "gemini",
+            "model": "openrouter/google/gemini-4-carbon",
+            "effort": "high",
+            "effortMapped": "high",
+            "effortSource": "contract",
+            "agentScopedListed": true,
+            "globallyAvailable": true,
+            "listedInLiveCatalog": true,
+            "exitCode": null,
+            "ok": null,
+            "winnerProvider": null,
+            "winnerModel": null,
+            "fallback": null,
+            "cause": null
+          },
+          {
+            "seat": "qwen",
+            "model": "openrouter/qwen/qwen4-max",
+            "effort": "high",
+            "effortMapped": "high",
+            "effortSource": "contract",
+            "agentScopedListed": true,
+            "globallyAvailable": true,
+            "listedInLiveCatalog": true,
+            "exitCode": null,
+            "ok": null,
+            "winnerProvider": null,
+            "winnerModel": null,
+            "fallback": null,
+            "cause": null
+          },
+          {
+            "seat": "sol",
+            "model": "oai-pool/gpt-6.1-sol",
+            "effort": "high",
+            "effortMapped": "high",
+            "effortSource": "contract",
+            "agentScopedListed": true,
+            "globallyAvailable": true,
+            "listedInLiveCatalog": true,
+            "exitCode": null,
+            "ok": null,
+            "winnerProvider": null,
+            "winnerModel": null,
+            "fallback": null,
+            "cause": null
+          }
+        ],
+        "absenceFinding": null,
+        "contradictions": [],
+        "notRunning": [],
+        "capacityFindings": [],
+        "configDriftFindings": [],
+        "effortFindings": [],
+        "rule": "A route may be called absent ONLY with verdict ROUTE_ABSENT_CONFIRMED (exit 1) from this probe's AGENT-SCOPED live catalog. TRUTH_NOT_ESTABLISHED (exit 2), ROUTE_PRESENT_BUT_NOT_RUNNING (exit 3) and ROUTE_NOT_IN_AGENT_CATALOG (exit 3) are never provider-absence findings, and a seat that never started a model turn is capacity/queueing -- never a credential a person must supply."
+      },
+      "positiveControl": {
+        "catalogScope": "agent",
+        "agentScoped": {
+          "command": "openclaw gateway call config.get",
+          "exitCode": 0,
+          "agentFound": true,
+          "wildcard": false,
+          "allowedModels": [
+            "oai-pool/gpt-6-astra",
+            "openrouter/deepseek/deepseek-v4.1-flash",
+            "zai-glm/glm-5.3",
+            "openrouter/x-ai/grok-4.7",
+            "oai-pool/gpt-6.1-sol",
+            "kimi/k3.1-pro",
+            "openrouter/deepseek/deepseek-v4.1-flash-1017",
+            "openrouter/moonshotai/kimi-k3.1-pro",
+            "openrouter/google/gemini-4-carbon",
+            "openrouter/qwen/qwen4-max"
+          ],
+          "defaultModel": "oai-pool/gpt-6-astra"
+        },
+        "availability": {
+          "command": "openclaw models list --all --json",
+          "exitCode": 0,
+          "modelsListed": 143,
+          "configuredAvailable": 27
+        }
+      },
+      "host": "565ed9aa5d39",
+      "seatMapPath": "/home/node/.openclaw/fusion-seat-map.json",
+      "seatMapSha256": null,
+      "seatMapPresent": false,
+      "unmappedSeats": [
+        "gemini",
+        "astra",
+        "sol",
+        "qwen"
+      ],
+      "liveTurnAttempted": false,
+      "kind": "routes_reachable",
+      "seats": [
+        {
+          "seat": "astra",
+          "model": "oai-pool/gpt-6-astra",
+          "fault": null,
+          "listedInLiveCatalog": true,
+          "agentScopedListed": true,
+          "globallyAvailable": true
+        },
+        {
+          "seat": "gemini",
+          "model": "openrouter/google/gemini-4-carbon",
+          "fault": null,
+          "listedInLiveCatalog": true,
+          "agentScopedListed": true,
+          "globallyAvailable": true
+        },
+        {
+          "seat": "qwen",
+          "model": "openrouter/qwen/qwen4-max",
+          "fault": null,
+          "listedInLiveCatalog": true,
+          "agentScopedListed": true,
+          "globallyAvailable": true
+        },
+        {
+          "seat": "sol",
+          "model": "oai-pool/gpt-6.1-sol",
+          "fault": null,
+          "listedInLiveCatalog": true,
+          "agentScopedListed": true,
+          "globallyAvailable": true
+        }
+      ],
+      "message": "the live gateway lists every reviewer route this round dispatches; a route-level refusal on this host is allowlist drift or capacity, never an absent provider"
+    }
+  },
+  "reviewLineage": {
+    "schema": "aeo.flo.review-round-lineage.v1",
+    "round": 1,
+    "ceiling": 4,
+    "status": "PASS",
+    "priorFail": null,
+    "nextRound": {
+      "allowed": false,
+      "reviewRound": null,
+      "blockerIds": [],
+      "reason": "status PASS is not FAIL"
+    },
+    "prior": null,
+    "headDelta": null,
+    "rounds": []
+  },
+  "seatAvailability": {
+    "schema": "fusion-seat-availability-v1",
+    "gate": "gate-b",
+    "headSha": "e600919a985b6c66ed924a2af7d648cbb46cd847",
+    "reviewRound": "full",
+    "declaredSeats": 4,
+    "requiredDeliveredVerdicts": 4,
+    "deliveredVerdicts": 4,
+    "passedSeats": 4,
+    "failedSeats": 0,
+    "shortfall": 0,
+    "seatEvidence": "seat-completions",
+    "seats": [
+      {
+        "seat": "astra",
+        "verdict": "PASS",
+        "status": "OK",
+        "delivered": true
+      },
+      {
+        "seat": "gemini",
+        "verdict": "PASS",
+        "status": "OK",
+        "delivered": true
+      },
+      {
+        "seat": "qwen",
+        "verdict": "PASS",
+        "status": "OK",
+        "delivered": true
+      },
+      {
+        "seat": "sol",
+        "verdict": "PASS",
+        "status": "OK",
+        "delivered": true
+      }
+    ],
+    "abstainedSeats": [],
+    "alarms": []
+  }
+}
