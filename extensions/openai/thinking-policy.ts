@@ -24,6 +24,11 @@ const OPENAI_UNIFIED_XHIGH_MODEL_IDS = [
   "gpt-5.4-nano",
 ] as const;
 
+// Families whose every member supports xhigh on the unified OpenAI provider. A family matches
+// its bare id or any "-"/"."-delimited variant (gpt-6, gpt-6-astra, gpt-6.1-sol), never a
+// longer number that merely shares the prefix (gpt-60).
+const OPENAI_UNIFIED_XHIGH_MODEL_FAMILIES = ["gpt-6"] as const;
+
 function normalizeModelId(value: string): string {
   return value.trim().toLowerCase();
 }
@@ -36,17 +41,31 @@ function matchesExactOrPrefix(id: string, values: readonly string[]): boolean {
   });
 }
 
+function matchesModelFamily(id: string, families: readonly string[]): boolean {
+  const normalizedId = normalizeModelId(id);
+  return families.some((family) => {
+    const normalizedFamily = normalizeModelId(family);
+    return (
+      normalizedId === normalizedFamily ||
+      normalizedId.startsWith(`${normalizedFamily}-`) ||
+      normalizedId.startsWith(`${normalizedFamily}.`)
+    );
+  });
+}
+
 function buildOpenAIThinkingProfile(params: {
   modelId: string;
   xhighModelIds: readonly string[];
+  xhighModelFamilies?: readonly string[];
 }): ProviderThinkingProfile {
   const supportsMax = normalizeModelId(params.modelId).startsWith("gpt-5.6");
+  const supportsXhigh =
+    matchesExactOrPrefix(params.modelId, params.xhighModelIds) ||
+    matchesModelFamily(params.modelId, params.xhighModelFamilies ?? []);
   return {
     levels: [
       ...OPENAI_THINKING_BASE_LEVELS,
-      ...(matchesExactOrPrefix(params.modelId, params.xhighModelIds)
-        ? [{ id: "xhigh" as const }]
-        : []),
+      ...(supportsXhigh ? [{ id: "xhigh" as const }] : []),
       ...(supportsMax ? [{ id: "max" as const }] : []),
     ],
   };
@@ -57,5 +76,9 @@ export function resolveOpenAICodexThinkingProfile(modelId: string): ProviderThin
 }
 
 export function resolveUnifiedOpenAIThinkingProfile(modelId: string): ProviderThinkingProfile {
-  return buildOpenAIThinkingProfile({ modelId, xhighModelIds: OPENAI_UNIFIED_XHIGH_MODEL_IDS });
+  return buildOpenAIThinkingProfile({
+    modelId,
+    xhighModelIds: OPENAI_UNIFIED_XHIGH_MODEL_IDS,
+    xhighModelFamilies: OPENAI_UNIFIED_XHIGH_MODEL_FAMILIES,
+  });
 }
