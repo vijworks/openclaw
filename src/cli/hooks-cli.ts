@@ -555,7 +555,11 @@ export function registerHooksCli(program: Command): void {
     .option("--timeout <ms>", "Gateway timeout in ms", "5000")
     .action(async (opts: NativeHookRelayCliOptions) =>
       runHooksCliAction(async () => {
-        process.exitCode = await runNativeHookRelayCli(opts);
+        const exitCode = await runNativeHookRelayCli(opts);
+        process.exitCode = exitCode;
+        // Like the one-shot commands: config and plugin loading can leave ref'd handles
+        // behind, and a relay that waits for the event loop to drain never exits.
+        requestExitAfterOneShotOutput(defaultRuntime, exitCode);
       }),
     );
 
