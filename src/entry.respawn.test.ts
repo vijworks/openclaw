@@ -37,6 +37,46 @@ describe("buildCliRespawnPlan", () => {
     ).toBeNull();
   });
 
+  it("never respawns the native hook relay into a detached child", () => {
+    // The harness kills the hook command it spawned on timeout; a detached respawn child would
+    // survive that kill as an orphaned full CLI (26 Nov 2026: one gateway OOMed on them).
+    expect(
+      buildCliRespawnPlan({
+        argv: [
+          "node",
+          "openclaw",
+          "hooks",
+          "relay",
+          "--provider",
+          "codex",
+          "--relay-id",
+          "r1",
+          "--event",
+          "post_tool_use",
+          "--timeout",
+          "5000",
+        ],
+        env: {},
+        execArgv: [],
+        autoNodeExtraCaCerts: "/etc/ssl/certs/ca-certificates.crt",
+        platform: "linux",
+      }),
+    ).toBeNull();
+  });
+
+  it("still respawns other hooks subcommands for warning suppression", () => {
+    const plan = expectCliRespawnPlan(
+      buildCliRespawnPlan({
+        argv: ["node", "openclaw", "hooks", "list"],
+        env: {},
+        execArgv: [],
+        autoNodeExtraCaCerts: undefined,
+        platform: "linux",
+      }),
+    );
+    expect(plan.argv).toContain(EXPERIMENTAL_WARNING_FLAG);
+  });
+
   it("adds NODE_EXTRA_CA_CERTS and warning suppression in one respawn", () => {
     const plan = buildCliRespawnPlan({
       argv: ["node", "openclaw", "status"],

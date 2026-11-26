@@ -66,11 +66,27 @@ export function shouldSkipRespawnForArgv(argv: string[]): boolean {
   );
 }
 
+/**
+ * `openclaw hooks relay` is the per-event native harness hook (Codex runs one for every tool call).
+ * It must stay a single process: the harness kills the command it spawned when the hook times out,
+ * and a respawned child is detached into its own process group, so it would outlive that kill as an
+ * orphan. Under load those orphans (one full CLI each) exhausted a gateway container's memory.
+ */
+export function isNativeHookRelayArgv(argv: string[]): boolean {
+  const invocation = resolveCliArgvInvocation(argv);
+  return (
+    invocation.primary === "hooks" &&
+    invocation.commandPath[0] === "hooks" &&
+    invocation.commandPath[1] === "relay"
+  );
+}
+
 /** Returns whether startup-environment respawn should be skipped without suppressing TUI respawn policy. */
 export function shouldSkipStartupEnvironmentRespawnForArgv(argv: string[]): boolean {
   const invocation = resolveCliArgvInvocation(argv);
   return (
     invocation.hasHelpOrVersion ||
-    (invocation.primary === "gateway" && isForegroundGatewayRunArgv(argv))
+    (invocation.primary === "gateway" && isForegroundGatewayRunArgv(argv)) ||
+    isNativeHookRelayArgv(argv)
   );
 }
